@@ -29,3 +29,4 @@
 ## 2026.8.18 河南萌新联赛2026第（五）场：信息工程大学B题 (dfs)
 ## 2026.8.19 牛客周赛157F题（线段树） 
 ## 2026.8.20 2025 ICPC Nanchang Invitational and Jiangxi Provincial Collegiate Programming Contest D题（离散化+差分+前缀和)
+## 2026.8.21 牛客小白月赛136D题（二分查找+数论）
