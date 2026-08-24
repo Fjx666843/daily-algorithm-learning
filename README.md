@@ -32,5 +32,4 @@
 ## 2026.8.21 牛客小白月赛136D题（二分查找+数论）
 ## 2026.8.22 2025 ICPC Nanchang Invitational and Jiangxi Provincial Collegiate Programming Contest F题（贪心）
 ## 2026.8.23 2026百度之星初赛第一场第3题（贪心）
-
 ## 2026.8.24 河南萌新联赛2026第（六）场：郑州大学L题（构造，位运算，毒酒问题）
