@@ -38,3 +38,4 @@
 ## 2026.8.27 第九届广西大学生程序设计大赛暨2026邀请赛 J题（数论，贪心）
 ## 2026.8.28 牛客练习赛156B题（博弈）
 ## 2026.8.29 The 2025 ICPC Asia East Continent Online Contest (I) A题（模拟+贪心）
+## 2026.9.1 The 2025 ICPC Asia East Continent Online Contest (II) D题（数学）
