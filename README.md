@@ -40,3 +40,5 @@
 ## 2026.8.29 The 2025 ICPC Asia East Continent Online Contest (I) A题（模拟+贪心）
 ## 2026.9.1 The 2025 ICPC Asia East Continent Online Contest (II) D题（数学）
 ## 2026.9.2 牛客每日一题 区间因数个数之和（枚举约数，整除分块，前缀和）
+## 2026.9.3 牛客每日一题 最大 FST 距离（曼哈顿距离）
+## 2026.9.4 牛客每日一题 Kevin逛超市 2 (困难版本)(贪心，排序）
