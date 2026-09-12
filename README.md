@@ -47,3 +47,4 @@
 ## 2026.9.8 [蓝桥杯 2026 省 C] 回收处理（堆，前后缀，枚举）
 ## 2026.9.9 LeetCode 热题 100 两数之和（哈希表）
 ## 2026.9.10 The 2024 ICPC Asia East Continent Online Contest (I) F题（单调栈）
+## 2026.9.12 The 2026 ICPC Asia East Continent Online Contest (II)（构造）

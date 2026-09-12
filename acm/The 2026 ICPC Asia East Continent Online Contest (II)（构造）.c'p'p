@@ -1,0 +1,241 @@
+​
+题目链接：K-MEX - 题目 - QOJ.ac
+
+题目描述：
+
+给定一个长度为 n 的数组 a。
+
+定义 mex(a) 为最小的没有出现在 a 中的非负整数。
+
+一次 k-变换：对于每个下标 i，独立选择：
+
+a[i] 保持不变
+或者
+a[i] 变成 k - a[i]
+
+得到新数组 a'。
+
+定义 k-mex(a) 为所有可能的 a' 中，mex(a') 的最大值。
+
+现在有 q 次询问，每次给出一个非负整数 k，求 k-mex(a)。
+为了减少输出量，只需要输出所有询问答案的异或和。
+
+题目思路：
+
+固定一个 k。
+
+每个元素 a[i] 可以变成：
+
+a[i]  或  k - a[i]
+
+所以一个元素对应一对值：
+
+{u, k - u}
+如果想让答案至少为 m，就需要覆盖：
+
+0, 1, 2, ..., m-1
+对于一对不同的非负值 {u, v}，其中 v = k - u：
+
+如果 u 和 v 都在前缀 [0, m-1] 中，那么这一对至少需要 2 个元素；
+如果只有一个在前缀中，那么至少需要 1 个元素；
+如果 u = v，也就是 k 为偶数且 u = k/2，那么只需要 1 个元素。
+于是答案受到两类限制。
+
+第一类限制：两个值都没出现过
+设 S 为数组中出现过的所有不同值。
+
+如果存在 t，满足：
+
+t ∉ S
+k - t ∉ S
+那么 t 和 k-t 这一对没有任何元素，无法覆盖 t。
+
+定义：
+
+g(k) = 最小的 t >= 0，满足 t ∉ S 且 k-t ∉ S
+答案一定不超过 g(k)。
+
+第二类限制：一对里恰好只有 1 个元素
+如果某个值 u 只出现一次：
+
+cnt[u] = 1
+并且它的镜像值：
+
+v = k - u
+没有出现过，那么这一对只有 1 个元素，却有两个不同的值。
+
+如果前缀同时包含 u 和 v，就无法同时覆盖它们。
+
+所以答案不能超过：
+
+max(u, v)
+定义：
+
+h(k) = min{ max(u, k-u) }
+满足：
+
+cnt[u] = 1
+k-u >= 0
+k-u != u
+cnt[k-u] = 0
+
+最终答案为：
+
+answer(k) = min(g(k), h(k))
+如何快速计算
+g(k) 只需要检查前 n+1 个未在 S 中出现过的非负整数。
+
+原因：对于每个 s ∈ S，它最多让一个位置 t = k-s 失效。
+所以最多有 n 个位置失效，前 n+1 个空位中一定有一个有效。
+
+如果 k > 4n，那么：
+
+max(u, k-u) >= k/2 > 2n
+而 g(k) <= 2n，所以此时 h(k) 不可能比 g(k) 更小，可以忽略。
+
+因此只需要对 k <= 4n 的询问计算 h(k)。
+
+总复杂度：O(n*n+q)
+
+代码如下：
+
+​#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int T;
+    cin >> T;
+
+    while (T--) {
+        int n;
+        cin >> n;
+
+        // cnt[x] 表示 x 在数组中出现的次数
+        unordered_map<long long, int> cnt;
+        cnt.reserve(n * 2 + 10);
+
+        for (int i = 0; i < n; ++i) {
+            long long x;
+            cin >> x;
+            ++cnt[x];
+        }
+
+        // S 表示所有出现过的不同值
+        unordered_set<long long> S;
+        S.reserve(n * 2 + 10);
+
+        // one 保存所有只出现一次的值
+        vector<long long> one;
+
+        for (auto &p : cnt) {
+            S.insert(p.first);
+            if (p.second == 1) {
+                one.push_back(p.first);
+            }
+        }
+
+        sort(one.begin(), one.end());
+
+        // h(k) 只需要在 k <= 4n 时计算
+        const long long LIM = 4LL * n;
+
+        // has[x] = 1 表示 x 在 S 中，且 x <= LIM
+        vector<char> has(LIM + 1, 0);
+        for (long long x : S) {
+            if (x <= LIM) has[x] = 1;
+        }
+
+        // 只保留 <= LIM 的出现一次的值
+        vector<long long> oneSmall;
+        for (long long u : one) {
+            if (u <= LIM) oneSmall.push_back(u);
+        }
+
+        // gaps 保存前 n+1 个不在 S 中的非负整数
+        vector<long long> gaps;
+        gaps.reserve(n + 1);
+
+        long long t = 0;
+        while ((int)gaps.size() < n + 1) {
+            if (!S.count(t)) gaps.push_back(t);
+            ++t;
+        }
+
+        int q;
+        cin >> q;
+
+        long long xr = 0;
+
+        // 对询问 k 去重，避免同一个 k 重复计算
+        unordered_map<long long, int> memo;
+        memo.reserve(q * 2 + 10);
+
+        while (q--) {
+            long long k;
+            cin >> k;
+
+            auto it = memo.find(k);
+            if (it != memo.end()) {
+                xr ^= it->second;
+                continue;
+            }
+
+            // 计算 g(k)
+            // g(k) 是第一个 t，使得 t 和 k-t 都没有出现在 S 中
+            long long g = 0;
+
+            for (long long gap : gaps) {
+                long long v = k - gap;
+
+                bool inS = false;
+
+                if (v >= 0) {
+                    if (v <= LIM) {
+                        inS = has[v];
+                    } else {
+                        inS = (S.find(v) != S.end());
+                    }
+                }
+
+                if (!inS) {
+                    g = gap;
+                    break;
+                }
+            }
+
+            // 计算 h(k)
+            // h(k) 表示“一对里只有一个元素”造成的最早限制
+            long long h = LLONG_MAX;
+
+            if (k <= LIM) {
+                for (long long u : oneSmall) {
+                    if (u > k) break;
+
+                    long long v = k - u;
+
+                    // 固定点，只有一个目标值，不构成限制
+                    if (v == u) continue;
+
+                    // v 没有出现过，这一对只有 1 个元素
+                    if (!has[v]) {
+                        h = min(h, max(u, v));
+                    }
+                }
+            }
+
+            // 最终答案取两类限制的最小值
+            int ans = (int)min(g, h);
+
+            memo[k] = ans;
+            xr ^= ans;
+        }
+
+        // 输出所有询问答案的异或和
+        cout << xr << '\n';
+    }
+
+    return 0;
+}
